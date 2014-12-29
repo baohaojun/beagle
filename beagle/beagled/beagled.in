@@ -86,14 +86,14 @@ if [ $heap_buddy -eq 1 ]; then
    if [ -z "$BEAGLE_HEAP_BUDDY_DIR" ]; then
       export BEAGLE_HEAP_BUDDY_DIR=.
    fi
-   MONO_EXTRA_ARGS --runtime=v4.0="--profile=heap-buddy:$BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $MONO_EXTRA_ARGS --runtime=v4.0"
+   MONO_EXTRA_ARGS="--profile=heap-buddy:$BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $MONO_EXTRA_ARGS"
    rm -f $BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $BEAGLE_HEAP_BUDDY_DIR/outfile.helper.*
 elif [ $heap_shot -eq 1 ]; then
    export _HEY_LETS_DO_A_HEAP_SHOT=1
    if [ -z "$BEAGLE_HEAP_SHOT_DIR" ]; then
       export BEAGLE_HEAP_SHOT_DIR=.
    fi
-   MONO_EXTRA_ARGS --runtime=v4.0="--profile=heap-shot:$BEAGLE_HEAP_SHOT_DIR/outfile.beagled $MONO_EXTRA_ARGS --runtime=v4.0"
+   MONO_EXTRA_ARGS="--profile=heap-shot:$BEAGLE_HEAP_SHOT_DIR/outfile.beagled $MONO_EXTRA_ARGS"
    rm -f $BEAGLE_HEAP_SHOT_DIR/outfile.beagled_* $BEAGLE_HEAP_SHOT_DIR/outfile.helper_*
 fi
 
@@ -101,7 +101,7 @@ fi
 
 if [ $mono_debug -eq 1 ]; then
    export BEAGLE_MONO_DEBUG_FLAG_IS_SET=1
-   MONO_EXTRA_ARGS --runtime=v4.0="--debug $MONO_EXTRA_ARGS --runtime=v4.0"
+   MONO_EXTRA_ARGS="--debug $MONO_EXTRA_ARGS"
 fi
 
 # The BEAGLE_MONO_RUNTIME variable can be used to specify the path

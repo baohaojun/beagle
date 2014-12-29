@@ -67,6 +67,12 @@ namespace Beagle.Daemon.KMailQueryable {
 				Log.Debug ("KMail folders not found. Will keep trying ");
 			} else
 				Log.Debug ("Guessing location of KMail folders: found at " + local_path);
+			local_path = Path.Combine(PathFinder.HomeDir, "Maildir");
+			if (! Directory.Exists(local_path)) {
+				local_path = null;
+			} else {
+				Log.Debug ("using {0} as maildir", local_path);
+			}
 			// I hope there is no ambiguity over imap path :P
 			dimap_path = Path.Combine (PathFinder.HomeDir, ".kde");
 			dimap_path = Path.Combine (dimap_path, "share");

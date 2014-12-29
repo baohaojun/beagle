@@ -254,7 +254,11 @@ namespace Beagle.Filters {
 				return;
 			}
 
-			string l = handler.Reader.ReadLine ();
+			string l = null;
+			try {
+				l = handler.Reader.ReadLine ();
+			} catch (IOException e) {
+			}
 
 			if (l == null)
 				Finished ();
