@@ -20,10 +20,6 @@ namespace Beagle.Util {
 			get { return "@sysconfdir@"; }
 		}
 
-		static public string PkgLibDir {
-			get { return "@pkglibdir@"; }
-		}
-
 		static public string PkgDataDir {
 			get { return "@pkgdatadir@"; }
 		}

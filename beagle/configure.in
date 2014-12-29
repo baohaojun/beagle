@@ -232,7 +232,7 @@ if test "x$enable_gui" = "xyes"; then
 	glade-sharp-2.0 >= $GTK_SHARP_REQUIRED
 	gnome-sharp-2.0 >= $GTK_SHARP_REQUIRED
 	gnome-vfs-sharp-2.0 >= $GTK_SHARP_REQUIRED
-	gmime-sharp-2.4 >= $GMIME_SHARP_REQUIRED
+	gmime-sharp-2.6 >= $GMIME_SHARP_REQUIRED
 ])
 	AC_SUBST(BEAGLE_UI_LIBS)
 
@@ -279,7 +279,7 @@ PKG_CHECK_MODULES(EVO,
                   evolution-sharp >= $EVOLUTION_SHARP_REQUIRED 	\
                   gconf-sharp-2.0 >= $GTK_SHARP_REQUIRED	\
 		  glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
-                  gmime-sharp-2.4 >= $GMIME_SHARP_REQUIRED,
+                  gmime-sharp-2.6 >= $GMIME_SHARP_REQUIRED,
                   have_evo_dependencies=yes, have_evo_dependencies=no)
 AC_SUBST(EVO_LIBS)
 
@@ -386,7 +386,7 @@ dnl ----------------------------------------------
 PKG_CHECK_MODULES(BEAGLED,
 [
 	shared-mime-info
-	gmime-sharp-2.4 >= $GMIME_SHARP_REQUIRED
+	gmime-sharp-2.6 >= $GMIME_SHARP_REQUIRED
 	glib-sharp-2.0 >= $GTK_SHARP_REQUIRED
 ])
 BEAGLED_LIBS="$BEAGLED_LIBS $GSF_SHARP_LIBS"

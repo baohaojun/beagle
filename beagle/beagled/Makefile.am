@@ -50,7 +50,7 @@ $(WEBINTERFACE_INDEX_XML): $(WEBINTERFACE_INDEX_XML_IN) $(WEBINTERFACE_FILES)
 
 CSC = $(MCS) -debug -nowarn:0162,0164,0168,0169,0219,0436
 
-BACKENDDIR = $(pkglibdir)/Backends
+BACKENDDIR = $(pkgdatadir)/Backends
 
 PLUGIN_TARGET = BeagleDaemonPlugins.dll
 
@@ -78,7 +78,7 @@ $(PLUGIN_TARGET): $(PLUGIN_CSFILES) $(PLUGIN_LOCAL_ASSEMBLIES)
 WRAPPER_IN = wrapper.in
 WRAPPER_SED = sed 					\
 	-e "s|\@prefix\@|$(prefix)|g"			\
-	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
+	-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
 	-e "s|\@evolibdir\@|$(EVO_LIBDIR)|g"		\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g"		\
@@ -98,22 +98,7 @@ snowballdir = $(srcdir)/Snowball.Net
 SNOWBALL_CSFILES =							\
 	$(snowballdir)/Lucene.Net/Analysis/Snowball/SnowballAnalyzer.cs	\
 	$(snowballdir)/Lucene.Net/Analysis/Snowball/SnowballFilter.cs	\
-	$(snowballdir)/SF/Snowball/Ext/ItalianStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/RussianStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/NorwegianStemmer.cs		\
 	$(snowballdir)/SF/Snowball/Ext/EnglishStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/German2Stemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/FinnishStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/PortugueseStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/SpanishStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/FrenchStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/DanishStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/SwedishStemmer.cs		\
-	$(snowballdir)/SF/Snowball/Ext/DutchStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/GermanStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/LovinsStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/KpStemmer.cs			\
-	$(snowballdir)/SF/Snowball/Ext/PorterStemmer.cs			\
 	$(snowballdir)/SF/Snowball/Among.cs				\
 	$(snowballdir)/SF/Snowball/SnowballProgram.cs
 
@@ -306,7 +291,8 @@ DAEMON_DLL_ASSEMBLIES = 					\
 	$(SHARPZIPLIB_LIBS)					\
 	$(NDESK_DBUS_GLIB_LIBS)					\
 	-r:Mono.Data.Sqlite					\
-	-r:Mono.Posix
+	-r:Mono.Posix                                           \
+        -r:System.Data
 
 if ENABLE_AVAHI
 DAEMON_DLL_CSFLAGS += -define:ENABLE_AVAHI
@@ -788,7 +774,7 @@ all: $(ALL_TARGETS)
 install-data-local: $(ALL_TARGETS)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	$(mkinstalldirs) $(DESTDIR)$(sbindir)
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
+	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
 	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
 	$(mkinstalldirs) $(DESTDIR)$(BACKENDDIR)
 if ENABLE_EVOLUTION
@@ -809,27 +795,27 @@ endif
 	done
 
 	@sed -e "s|\#installed=1|installed=1|" < $(INDEX_HELPER_WRAPPER) > $(INDEX_HELPER_WRAPPER).tmp
-	$(INSTALL_SCRIPT) $(INDEX_HELPER_WRAPPER).tmp $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
+	$(INSTALL_SCRIPT) $(INDEX_HELPER_WRAPPER).tmp $(DESTDIR)$(pkgdatadir)/$(INDEX_HELPER_WRAPPER)
 	@rm -f $(INDEX_HELPER_WRAPPER).tmp
 
-	$(INSTALL_DATA) $(PLUGIN_TARGET)                 $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(PLUGIN_TARGET).mdb             $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(DAEMON_DLL_TARGET)             $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(DAEMON_DLL_TARGET).mdb         $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(DAEMON_TARGET)                 $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(DAEMON_TARGET).mdb             $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(EXTRACT_CONTENT_TARGET)        $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(EXTRACT_CONTENT_TARGET).mdb    $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(INDEX_HELPER_TARGET)           $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(INDEX_HELPER_TARGET).mdb       $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(BUILD_INDEX_TARGET)            $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(BUILD_INDEX_TARGET).mdb        $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(DUMP_INDEX_TARGET)             $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(DUMP_INDEX_TARGET).mdb         $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET)           $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET).mdb       $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(REMOVABLE_INDEX_TARGET)            $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(REMOVABLE_INDEX_TARGET).mdb        $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(PLUGIN_TARGET)                 $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(PLUGIN_TARGET).mdb             $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(DAEMON_DLL_TARGET)             $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(DAEMON_DLL_TARGET).mdb         $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(DAEMON_TARGET)                 $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(DAEMON_TARGET).mdb             $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(EXTRACT_CONTENT_TARGET)        $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(EXTRACT_CONTENT_TARGET).mdb    $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(INDEX_HELPER_TARGET)           $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(INDEX_HELPER_TARGET).mdb       $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(BUILD_INDEX_TARGET)            $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(BUILD_INDEX_TARGET).mdb        $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(DUMP_INDEX_TARGET)             $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(DUMP_INDEX_TARGET).mdb         $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET)           $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(MANAGE_INDEX_TARGET).mdb       $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(REMOVABLE_INDEX_TARGET)            $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(REMOVABLE_INDEX_TARGET).mdb        $(DESTDIR)$(pkgdatadir)
 if ENABLE_THUNDERBIRD
 	$(INSTALL_DATA) $(THUNDERBIRD_TARGET)                 $(DESTDIR)$(BACKENDDIR)
 	$(INSTALL_DATA) $(THUNDERBIRD_TARGET).mdb             $(DESTDIR)$(BACKENDDIR)
@@ -862,26 +848,26 @@ endif
 		rm -f $(DESTDIR)$(sbindir)/$$i || exit 1;	\
 	done
 
-	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(PLUGIN_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_DLL_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(DAEMON_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER)
-	rm -f $(DESTDIR)$(pkglibdir)/$(INDEX_HELPER_WRAPPER).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(EXTRACT_CONTENT_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(EXTRACT_CONTENT_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(BUILD_INDEX_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(DUMP_INDEX_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(DUMP_INDEX_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(MANAGE_INDEX_TARGET).mdb
-	rm -f $(DESTDIR)$(pkglibdir)/$(REMOVABLE_INDEX_TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(REMOVABLE_INDEX_TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(PLUGIN_TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(PLUGIN_TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(DAEMON_DLL_TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(DAEMON_DLL_TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(DAEMON_TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(DAEMON_TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(INDEX_HELPER_TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(INDEX_HELPER_TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(INDEX_HELPER_WRAPPER)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(INDEX_HELPER_WRAPPER).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(EXTRACT_CONTENT_TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(EXTRACT_CONTENT_TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(BUILD_INDEX_TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(BUILD_INDEX_TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(DUMP_INDEX_TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(DUMP_INDEX_TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(MANAGE_INDEX_TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(MANAGE_INDEX_TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(REMOVABLE_INDEX_TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(REMOVABLE_INDEX_TARGET).mdb
 
 BIN_WRAPPERS = \
 	$(DAEMON_WRAPPER)		\

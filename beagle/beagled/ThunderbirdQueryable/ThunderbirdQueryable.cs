@@ -404,7 +404,7 @@ namespace Beagle.Daemon.ThunderbirdQueryable {
 			indexable.Timestamp = DateTimeUtil.UnixToDateTimeUtc (Convert.ToInt64 (GetText (document, "Date")));
 			indexable.CacheContent = true;
 			indexable.FlushBufferCache = true;
-			indexable.SetBinaryStream (message.Stream);
+			// indexable.SetBinaryStream (message.Stream);
 
 			indexable.AddProperty (Property.NewKeyword ("fixme:client", "thunderbird"));
 			indexable.AddProperty (Property.NewKeyword ("fixme:folder", GetText (document, "Folder")));

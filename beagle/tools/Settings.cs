@@ -715,7 +715,7 @@ public class SettingsDialog
 	{
 		SafeProcess pc = new SafeProcess ();
 
-		string keygrabber_file = Path.Combine (ExternalStringsHack.PkgLibDir, "keygrabber.py");
+		string keygrabber_file = Path.Combine (ExternalStringsHack.PkgDataDir, "keygrabber.py");
 		if (! File.Exists (keygrabber_file))
 			throw new Exception ("keygrabber.py not found");
 

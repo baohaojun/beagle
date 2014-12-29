@@ -16158,7 +16158,7 @@
 2004-12-17 13:47  fhedberg
 
 	* beagled/: PathFinder.cs, QueryDriver.cs: Support dynamic backend
-	  loading from $PkgLibDir/Backends.
+	  loading from $PkgDataDir/Backends.
 
 2004-12-16 17:14  joeshaw
 
@@ -17427,7 +17427,7 @@
 
 		  * tray/TrayIcon/Makefile.am (install-exec-local,
 	  uninstall-local):
-		  Use pkglibdir instead of libdir to avoid collisions.
+		  Use pkgdatadir instead of libdir to avoid collisions.
 
 2004-11-01 15:04  campd
 
@@ -19473,7 +19473,7 @@
 
 2004-07-31 17:57  campd
 
-	* beagled/Makefile.am: install BeagleDaemon.exe into pkglibdir
+	* beagled/Makefile.am: install BeagleDaemon.exe into pkgdatadir
 
 2004-07-31 17:51  campd
 

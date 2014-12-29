@@ -103,9 +103,9 @@ ASSEMBLIES =				\
 	$(NDESK_DBUS_LIBS)		\
 	$(NDESK_DBUS_GLIB_LIBS)		\
 	-r:Mono.Posix			\
-	-r:Mono.Cairo
+        -r:/usr/lib/mono/4.0/Mono.Cairo.dll
 
-pkglib_DATA = $(ASSEMBLY) $(ASSEMBLY).mdb $(ASSEMBLY).config
+pkgdata_DATA = $(ASSEMBLY) $(ASSEMBLY).mdb $(ASSEMBLY).config
 
 BIN_WRAPPERS = beagle-search
 
@@ -116,7 +116,7 @@ $(ASSEMBLY).mdb: $(ASSEMBLY)
 
 beagle-search: beagle-search.in
 	sed 					\
-	-e "s:@pkglibdir@:${pkglibdir}:" 	\
+	-e "s:@pkgdatadir@:${pkgdatadir}:" 	\
 	-e "s:@bash@:$(BASH):"			\
 	< $(srcdir)/beagle-search.in > beagle-search
 	chmod a+x beagle-search

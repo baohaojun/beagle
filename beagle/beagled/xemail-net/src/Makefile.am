@@ -1,4 +1,4 @@
-xemaildir=$(pkglibdir)
+xemaildir=$(pkgdatadir)
 xemail_SCRIPTS = xemail-net.dll
 EXTRA_DIST = $(xemail_sources) $(xemail_sources_in)
 CLEANFILES = xemail-net.dll

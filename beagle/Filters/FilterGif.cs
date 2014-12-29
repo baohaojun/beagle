@@ -226,12 +226,12 @@ namespace Beagle.Filters {
 
 							Stream.ReadByte ();
 
-							char [] cbuffer = new char [11];
+							char [] cbuffer2 = new char [11];
 							for (int i = 0; i < 11; i++) {
-								cbuffer [i] = (char) Stream.ReadByte ();
+								cbuffer2 [i] = (char) Stream.ReadByte ();
 							}
 
-							string application = new string (cbuffer);
+							string application = new string (cbuffer2);
 
 							if (application == "NETSCAPE2.0") {
 								if (Debug)

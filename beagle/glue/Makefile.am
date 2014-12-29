@@ -101,7 +101,7 @@ libbeagleuiglue_la_SOURCES =	\
 libbeagleuiglue_la_LIBADD =	\
 	$(UI_GLUE_LIBADD)
 
-gluelibdir = $(pkglibdir)
+gluelibdir = $(pkgdatadir)
 gluelib_LTLIBRARIES = 		\
 	libbeagleglue.la
 

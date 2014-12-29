@@ -15,7 +15,7 @@ ASSEMBLIES =				\
 WRAPPER_IN = wrapper.in
 WRAPPER_SED = sed 					\
 	-e "s|\@prefix\@|$(prefix)|g"			\
-	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
+	-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
 	-e "s|\@libexecdir\@|$(libexecdir)|g"		\
 	-e "s|\@bindir\@|$(bindir)|g"			\
@@ -223,8 +223,8 @@ endif
 all: $(TARGETS) $(WRAPPERS)
 
 install-data-local: $(TARGETS) $(WRAPPERS)
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGETS) $(TARGETS_MDB) $(DESTDIR)$(pkglibdir)
+	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(TARGETS) $(TARGETS_MDB) $(DESTDIR)$(pkgdatadir)
 
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 
@@ -245,11 +245,11 @@ install-data-local: $(TARGETS) $(WRAPPERS)
 	$(mkinstalldirs) $(DESTDIR)$(crondir)
 	$(INSTALL_SCRIPT) $(CRAWL_WRAPPER) $(DESTDIR)$(crondir)
 if ENABLE_GUI
-	$(INSTALL_DATA) $(KEYGRABBER) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(KEYGRABBER) $(DESTDIR)$(pkgdatadir)
 endif
 
 uninstall-local:
-	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGETS) && rm -f $(TARGETS_MDB)
+	cd $(DESTDIR)$(pkgdatadir) && rm -f $(TARGETS) && rm -f $(TARGETS_MDB)
 
 	@for i in $(BIN_WRAPPERS); do				\
 		echo "rm -f $(DESTDIR)$(bindir)/$$i";		\
@@ -258,7 +258,7 @@ uninstall-local:
 
 	cd $(DESTDIR)$(crondir) && rm -f $(CRAWL_WRAPPER)
 if ENABLE_GUI
-	cd $(DESTDIR)$(pkglibdir) && rm -f $(KEYGRABBER)
+	cd $(DESTDIR)$(pkgdatadir) && rm -f $(KEYGRABBER)
 endif
 
 EXTRA_DIST =				\

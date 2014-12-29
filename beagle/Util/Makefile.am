@@ -24,7 +24,7 @@ EXTSTR_IN = $(srcdir)/$(EXTSTR).in
 $(EXTSTR): $(EXTSTR_IN)
 	sed	-e "s|\@prefix\@|$(prefix)|g"			\
 		-e "s|\@sysconfdir\@|$(sysconfdir)|g"		\
-		-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
+		-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"		\
 		-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"		\
 		-e "s|\@localstatedir\@|$(localstatedir)|g"	\
 		-e "s|\@datadir\@|$(datadir)|g"			\
@@ -181,7 +181,8 @@ UTIL_ASSEMBLIES =				\
 	$(NDESK_DBUS_GLIB_LIBS)			\
 	-r:Mono.Data.Sqlite			\
 	-r:Mono.Posix				\
-	-r:ICSharpCode.SharpZipLib
+	-r:ICSharpCode.SharpZipLib              \
+        -r:System.Data
 
 if ENABLE_THUNDERBIRD
 UTIL_CSFILES +=					\
@@ -259,15 +260,15 @@ endif
 all: $(ALL_TARGETS)
 
 install-data-local: $(ALL_TARGETS)
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(UTIL_TARGET) $(UTIL_TARGET).mdb $(srcdir)/$(UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
+	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(UTIL_TARGET) $(UTIL_TARGET).mdb $(srcdir)/$(UTIL_TARGET_CONFIG) $(DESTDIR)$(pkgdatadir)
 if ENABLE_GUI
-	$(INSTALL_DATA) $(UI_UTIL_TARGET) $(UI_UTIL_TARGET).mdb $(srcdir)/$(UI_UTIL_TARGET_CONFIG) $(DESTDIR)$(pkglibdir)
+	$(INSTALL_DATA) $(UI_UTIL_TARGET) $(UI_UTIL_TARGET).mdb $(srcdir)/$(UI_UTIL_TARGET_CONFIG) $(DESTDIR)$(pkgdatadir)
 endif
 
 uninstall-local:
-	rm -f $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET) $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET).mdb $(DESTDIR)$(pkglibdir)/$(UTIL_TARGET_CONFIG)
-	rm -f $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET) $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET).mdb $(DESTDIR)$(pkglibdir)/$(UI_UTIL_TARGET_CONFIG)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(UTIL_TARGET) $(DESTDIR)$(pkgdatadir)/$(UTIL_TARGET).mdb $(DESTDIR)$(pkgdatadir)/$(UTIL_TARGET_CONFIG)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(UI_UTIL_TARGET) $(DESTDIR)$(pkgdatadir)/$(UI_UTIL_TARGET).mdb $(DESTDIR)$(pkgdatadir)/$(UI_UTIL_TARGET_CONFIG)
 
 
 COND_CS_FILES =				\

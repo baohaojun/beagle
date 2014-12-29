@@ -450,7 +450,7 @@ namespace Beagle.Daemon.KMailQueryable {
 			if (folder_name == Queryable.SentMailFolderName)
 				indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
 			else {
-				string kmail_msg_sent = message.GetHeader ("X-KMail-Link-Type");
+				string kmail_msg_sent = ((GMime.Entity)message).HeaderList["X-KMail-Link-Type"];
 				if (kmail_msg_sent == "reply")
 					indexable.AddProperty (Property.NewFlag ("fixme:isSent"));
 			}
@@ -463,7 +463,7 @@ namespace Beagle.Daemon.KMailQueryable {
 				indexable.AddProperty (Property.NewDate ("fixme:received", message.Date.ToUniversalTime ()));
 #endif
 
-			indexable.SetBinaryStream (message.Stream);
+			// indexable.SetBinaryStream (message.Stream);
 
 			return indexable;
 		}

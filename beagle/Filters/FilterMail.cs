@@ -124,7 +124,7 @@ namespace Beagle.Filters {
 				Error ();
 		}
 
-		private bool HasAttachments (GMime.Object mime_part)
+		private bool HasAttachments (GMime.Entity mime_part)
 		{
 			if (mime_part is GMime.MessagePart)
 				return true;
@@ -193,21 +193,21 @@ namespace Beagle.Filters {
 			// Store the message ID and references are unsearched
 			// properties.  They will be used to generate
 			// conversations in the frontend.
-			string msgid = this.message.GetHeader ("Message-Id");
+			string msgid = this.message.HeaderList ["Message-Id"];
 		        if (msgid != null)
 				AddProperty (Property.NewUnsearched ("fixme:msgid", GMime.Utils.DecodeMessageId (msgid)));
 
 			foreach (GMime.References refs in this.message.References)
 				AddProperty (Property.NewUnsearched ("fixme:reference", refs.MessageId));
 
-			string list_id = this.message.GetHeader ("List-Id");
+			string list_id = this.message.HeaderList ["List-Id"];
 			if (list_id != null)
 				AddProperty (Property.New ("fixme:mlist", GMime.Utils.HeaderDecodePhrase (list_id)));
 
 			// KMail can store replies in the same folder
 			// Use issent flag to distinguish between incoming
 			// and outgoing message
-			string kmail_msg_sent = this.message.GetHeader ("X-KMail-Link-Type");
+			string kmail_msg_sent = this.message.HeaderList ["X-KMail-Link-Type"];
 			bool issent_is_set = false;
 			foreach (Property property in Indexable.Properties) {
 				if (property.Key == "fixme:isSent") {
@@ -236,7 +236,7 @@ namespace Beagle.Filters {
 							{
 								AddLink (s);
 							});
-			using (GMime.Object mime_part = this.message.MimePart)
+			using (GMime.Entity mime_part = this.message.MimePart)
 				this.handler.OnEachPart (mime_part);
 
 			AddIndexables (this.handler.ChildIndexables);
@@ -339,9 +339,9 @@ namespace Beagle.Filters {
 				return false;
 			}
 
-			public void OnEachPart (GMime.Object mime_part)
+			public void OnEachPart (GMime.Entity mime_part)
 			{
-				GMime.Object part = null;
+				GMime.Entity part = null;
 				bool part_needs_dispose = false;
 
 				//for (int i = 0; i < this.depth; i++)
@@ -354,7 +354,7 @@ namespace Beagle.Filters {
 					GMime.MessagePart msg_part = (GMime.MessagePart) mime_part;
 
 					using (GMime.Message message = msg_part.Message) {
-						using (GMime.Object subpart = message.MimePart)
+						using (GMime.Entity subpart = message.MimePart)
 							this.OnEachPart (subpart);
 					}
 				} else if (mime_part is GMime.Multipart) {
@@ -367,7 +367,7 @@ namespace Beagle.Filters {
 						// The richest formats are at the end, so work from there
 						// backward.
 						for (int i = num_parts - 1; i >= 0; i--) {
-							GMime.Object subpart = multipart[i];
+							GMime.Entity subpart = multipart[i];
 
 							if (IsMimeTypeHandled (subpart.ContentType.ToString ())) {
 								part = subpart;
@@ -383,7 +383,7 @@ namespace Beagle.Filters {
 					// the parts, treat them like a bunch of attachments.
 					if (part == null) {
 						for (int i = 0; i < num_parts; i++) {
-							using (GMime.Object subpart = multipart[i])
+							using (GMime.Entity subpart = multipart[i])
 								this.OnEachPart (subpart);
 						}
 					}

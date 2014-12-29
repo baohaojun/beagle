@@ -302,7 +302,7 @@ namespace Beagle.Daemon.GoogleBackend {
 		// Copied from FilterMail.cs:DoPullProperties
 		private Hit MessageToHit (GMime.Message message)
 		{
-			string msgid = message.GetHeader ("Message-Id");
+			string msgid = message.HeaderList ["Message-Id"];
 			if (msgid == null)
 				return null;
 
@@ -364,7 +364,7 @@ namespace Beagle.Daemon.GoogleBackend {
 			foreach (GMime.References refs in message.References)
 				hit.AddProperty (Property.NewUnsearched ("fixme:reference", refs.MessageId));
 
-			string list_id = message.GetHeader ("List-Id");
+			string list_id = message.HeaderList ["List-Id"];
 			if (list_id != null)
 				hit.AddProperty (Property.New ("fixme:mlist", GMime.Utils.HeaderDecodePhrase (list_id)));
 

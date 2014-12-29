@@ -1,5 +1,5 @@
 
-FILTERDIR = $(pkglibdir)/Filters
+FILTERDIR = $(pkgdatadir)/Filters
 CSC = $(MCS) -debug
 
 TARGET = Filters.dll

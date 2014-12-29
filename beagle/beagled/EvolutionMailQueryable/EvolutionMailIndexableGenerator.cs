@@ -277,7 +277,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 				
 				++this.count;
 
-				string x_evolution = message.GetHeader ("X-Evolution");
+				string x_evolution = message.HeaderList ["X-Evolution"];
 				if (x_evolution == null || x_evolution == "") {
 					Logger.Log.Info ("{0}: Message at offset {1} has no X-Evolution header!",
 							 this.folder_name, this.mbox_parser.FromOffset);
@@ -398,7 +398,7 @@ namespace Beagle.Daemon.EvolutionMailQueryable {
 			if (CheckFlags (flags, B_U_Camel.CamelFlags.AnsweredAll))
 				indexable.AddProperty (Property.NewFlag ("fixme:isAnsweredAll"));
 
-			indexable.SetBinaryStream (message.Stream);
+			// indexable.SetBinaryStream (message.Stream);
 
 			return indexable;
 		}

@@ -48,11 +48,11 @@ $(TARGET): $(CSFILES) $(LOCAL_ASSEMBLIES) $(RESOURCES)
 all: $(TARGET)
 
 install-data-local: $(TARGET)
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(TARGET).mdb $(DESTDIR)$(pkglibdir)
+	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(TARGET) $(TARGET).mdb $(DESTDIR)$(pkgdatadir)
 
 uninstall-local:
-	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET) $(DESTDIR)$(pkglibdir)/$(TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(TARGET) $(DESTDIR)$(pkgdatadir)/$(TARGET).mdb
 
 EXTRA_DIST =		\
 	$(CSFILES)

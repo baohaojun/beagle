@@ -33,21 +33,21 @@ all: $(TARGET) $(WRAPPER)
 
 install-data-local: $(TARGET)
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGET) $(TARGET).mdb $(DESTDIR)$(pkglibdir)
+	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(TARGET) $(TARGET).mdb $(DESTDIR)$(pkgdatadir)
 	sed -e "s|\#installed=1|installed=1|" < $(WRAPPER) > $(WRAPPER).tmp
 	$(INSTALL_SCRIPT) $(WRAPPER).tmp $(DESTDIR)$(bindir)/$(WRAPPER)
 	rm -f $(WRAPPER).tmp
 
 uninstall-local:
-	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET)
-	rm -f $(DESTDIR)$(pkglibdir)/$(TARGET).mdb
+	rm -f $(DESTDIR)$(pkgdatadir)/$(TARGET)
+	rm -f $(DESTDIR)$(pkgdatadir)/$(TARGET).mdb
 	rm -f $(DESTDIR)$(bindir)/$(WRAPPER)
 
 $(WRAPPER): $(srcdir)/$(WRAPPER).in
 	sed 					\
 	-e "s|\@prefix\@|$(prefix)|g" 		\
-	-e "s|\@pkglibdir\@|$(pkglibdir)|g"	\
+	-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"	\
 	-e "s|\@target\@|$(TARGET)|g" 		\
 	-e "s|\@gacprefix\@|$(GAC_PREFIX)|g" 	\
 	-e "s|\@bash\@|$(BASH)|"		\

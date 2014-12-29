@@ -15,7 +15,7 @@ ASSEMBLIES =				\
 WRAPPER_IN = ../tools/wrapper.in
 WRAPPER_SED = sed 					\
 	-e "s|\@prefix\@|$(prefix)|g"			\
-	-e "s|\@pkglibdir\@|$(pkglibdir)|g"		\
+	-e "s|\@pkgdatadir\@|$(pkgdatadir)|g"		\
 	-e "s|\@libdir\@|$(libdir)|g"			\
 	-e "s|\@libexecdir\@|$(libexecdir)|g"		\
 	-e "s|\@bindir\@|$(bindir)|g"			\
@@ -68,8 +68,8 @@ WRAPPERS = 			\
 all: $(TARGETS) $(WRAPPERS) $(RDF_QUERY_TOOL_TARGET) $(RDF_QUERY_TOOL_WRAPPER)
 
 install-data-local: $(TARGETS) $(WRAPPERS)
-	$(mkinstalldirs) $(DESTDIR)$(pkglibdir)
-	$(INSTALL_DATA) $(TARGETS) $(TARGETS_MDB) $(DESTDIR)$(pkglibdir)
+	$(mkinstalldirs) $(DESTDIR)$(pkgdatadir)
+	$(INSTALL_DATA) $(TARGETS) $(TARGETS_MDB) $(DESTDIR)$(pkgdatadir)
 
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 
@@ -81,7 +81,7 @@ install-data-local: $(TARGETS) $(WRAPPERS)
 	done
 
 uninstall-local:
-	cd $(DESTDIR)$(pkglibdir) && rm -f $(TARGETS) && rm -f $(TARGETS_MDB)
+	cd $(DESTDIR)$(pkgdatadir) && rm -f $(TARGETS) && rm -f $(TARGETS_MDB)
 
 	@for i in $(WRAPPERS); do				\
 		echo "rm -f $(DESTDIR)$(bindir)/$$i";		\

@@ -33,11 +33,11 @@ else
     # Otherwise default to running in the background
     fg_default=0
 
-    TARGET_EXE="@pkglibdir@/@target@"
+    TARGET_EXE="@pkgdatadir@/@target@"
 
-    export _BEAGLED_INDEX_HELPER_PATH="@pkglibdir@"
-    export MONO_PATH="@pkglibdir@${MONO_PATH+:$MONO_PATH}"
-    export LD_LIBRARY_PATH="@pkglibdir@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
+    export _BEAGLED_INDEX_HELPER_PATH="@pkgdatadir@"
+    export MONO_PATH="@pkgdatadir@${MONO_PATH+:$MONO_PATH}"
+    export LD_LIBRARY_PATH="@pkgdatadir@${LD_LIBRARY_PATH+:$LD_LIBRARY_PATH}"
 fi
 
 EVO_LIBDIR="@evolibdir@"
@@ -86,14 +86,14 @@ if [ $heap_buddy -eq 1 ]; then
    if [ -z "$BEAGLE_HEAP_BUDDY_DIR" ]; then
       export BEAGLE_HEAP_BUDDY_DIR=.
    fi
-   MONO_EXTRA_ARGS="--profile=heap-buddy:$BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $MONO_EXTRA_ARGS"
+   MONO_EXTRA_ARGS --runtime=v4.0="--profile=heap-buddy:$BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $MONO_EXTRA_ARGS --runtime=v4.0"
    rm -f $BEAGLE_HEAP_BUDDY_DIR/outfile.beagled $BEAGLE_HEAP_BUDDY_DIR/outfile.helper.*
 elif [ $heap_shot -eq 1 ]; then
    export _HEY_LETS_DO_A_HEAP_SHOT=1
    if [ -z "$BEAGLE_HEAP_SHOT_DIR" ]; then
       export BEAGLE_HEAP_SHOT_DIR=.
    fi
-   MONO_EXTRA_ARGS="--profile=heap-shot:$BEAGLE_HEAP_SHOT_DIR/outfile.beagled $MONO_EXTRA_ARGS"
+   MONO_EXTRA_ARGS --runtime=v4.0="--profile=heap-shot:$BEAGLE_HEAP_SHOT_DIR/outfile.beagled $MONO_EXTRA_ARGS --runtime=v4.0"
    rm -f $BEAGLE_HEAP_SHOT_DIR/outfile.beagled_* $BEAGLE_HEAP_SHOT_DIR/outfile.helper_*
 fi
 
@@ -101,7 +101,7 @@ fi
 
 if [ $mono_debug -eq 1 ]; then
    export BEAGLE_MONO_DEBUG_FLAG_IS_SET=1
-   MONO_EXTRA_ARGS="--debug $MONO_EXTRA_ARGS"
+   MONO_EXTRA_ARGS --runtime=v4.0="--debug $MONO_EXTRA_ARGS --runtime=v4.0"
 fi
 
 # The BEAGLE_MONO_RUNTIME variable can be used to specify the path
@@ -114,11 +114,11 @@ fi
 
 if [ $monogrind -eq 1 ]; then
     export GC_DONT_GC=1
-    CMDLINE="monogrind $TARGET_EXE $MONO_EXTRA_ARGS $BEAGLED_ARGS $FGBG_ARG"
+    CMDLINE="monogrind $TARGET_EXE $MONO_EXTRA_ARGS --runtime=v4.0 $BEAGLED_ARGS $FGBG_ARG"
 elif [ $mdb -eq 1 ]; then
     CMDLINE="mdb -args $TARGET_EXE $BEAGLED_ARGS $FGBG_ARG"
 else
-    CMDLINE="$BEAGLE_MONO_RUNTIME $MONO_EXTRA_ARGS $TARGET_EXE $BEAGLED_ARGS $FGBG_ARG"
+    CMDLINE="$BEAGLE_MONO_RUNTIME $MONO_EXTRA_ARGS --runtime=v4.0 $TARGET_EXE $BEAGLED_ARGS $FGBG_ARG"
 fi
 
 PROCESS_NAME="beagled"

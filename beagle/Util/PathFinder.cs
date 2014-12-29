@@ -41,16 +41,16 @@ namespace Beagle.Util {
 			}
 		}
 
-		static public string PkgLibDir {
-			get { return ExternalStringsHack.PkgLibDir; }
+		static public string PkgDataDir {
+			get { return ExternalStringsHack.PkgDataDir; }
 		}
 
 		static public string FilterDir {
-			get { return Path.Combine (PkgLibDir, "Filters"); }
+			get { return Path.Combine (PkgDataDir, "Filters"); }
 		}
 
 		static public string BackendDir {
-			get { return Path.Combine (PkgLibDir, "Backends"); }
+			get { return Path.Combine (PkgDataDir, "Backends"); }
 		}
 
 		static private string LocalStateDir {

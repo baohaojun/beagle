@@ -102,7 +102,7 @@ public static class ConfigTool {
 
 		if (!found_daemon_lib) {
 			try {
-				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgLibDir, "BeagleDaemonLib.dll")));
+				assemblies.Add (Assembly.LoadFrom (Path.Combine (PathFinder.PkgDataDir, "BeagleDaemonLib.dll")));
 			} catch (FileNotFoundException) {
 				Console.WriteLine ("WARNING: Could not find backend list.");
 				Environment.Exit (1);
