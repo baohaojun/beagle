@@ -154,7 +154,8 @@ ASSEMBLIES =				\
 	$(TAGLIB_SHARP_LIBS)		\
 	-r:Mono.Posix			\
 	-r:System.Web			\
-	$(LOCAL_ASSEMBLIES:%=-r:%)
+	$(LOCAL_ASSEMBLIES:%=-r:%)      \
+        -r:$(HOME)/.mono/MimeKit.1.0.3.0/lib/net40/MimeKit.dll
 
 ########################################################
 

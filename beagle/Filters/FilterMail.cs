@@ -29,8 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-
-using GMime;
+using MimeKit;
 
 using Beagle;
 using Beagle.Daemon;
@@ -40,11 +39,9 @@ namespace Beagle.Filters {
 
 	public class FilterMail : Beagle.Daemon.Filter, IDisposable {
 
-		private static bool gmime_initialized = false;
-		private static bool gmime_broken = false;
 		private static bool snippet_attachment = false;
 
-		private GMime.Message message;
+		private MimeMessage message;
 		private PartHandler handler;
 
 		public FilterMail ()
@@ -90,136 +87,86 @@ namespace Beagle.Filters {
 
 		protected override void DoOpen (FileInfo info)
 		{
-			if (!gmime_initialized) {
-				gmime_initialized = true;
+			FileStream stream = new FileStream (info.FullName, FileMode.Open, FileAccess.Read);
 
-				// Only try initialization once; if it fails, it'll never work.
-				try {
-					GMime.Global.Init ();
-				} catch (Exception e) {
-					Log.Error (e, "Unable to initialize GMime");
-					gmime_broken = true;
-					Error ();
-					return;
-				}
-			}
-
-			if (gmime_broken) {
-				Error ();
-				return;
-			}
-
-			int mail_fd = Mono.Unix.Native.Syscall.open (info.FullName, Mono.Unix.Native.OpenFlags.O_RDONLY);
-			
-			if (mail_fd == -1)
-				throw new IOException (String.Format ("Unable to read {0} for parsing mail", info.FullName));
-
-			GMime.StreamFs stream = new GMime.StreamFs (mail_fd);
-			GMime.Parser parser = new GMime.Parser (stream);
-			this.message = parser.ConstructMessage ();
+			this.message = MimeMessage.Load (stream);
 			stream.Dispose ();
-			parser.Dispose ();
 
 			if (this.message == null)
 				Error ();
 		}
 
-		private bool HasAttachments (GMime.Entity mime_part)
+		private bool HasAttachments ()
 		{
-			if (mime_part is GMime.MessagePart)
-				return true;
-
-			// Messages that are multipart/alternative shouldn't be considered as having
-			// attachments.  Unless of course they do.
-			if (mime_part is GMime.Multipart && mime_part.ContentType.MediaSubtype.ToLower () != "alternative")
-				return true;
-
-			return false;
+			int i = 0;
+			foreach (var part in this.message.Attachments) {
+				i++;
+			}
+			return i > 0;
 		}
 
 		protected override void DoPullProperties ()
 		{
-			string subject = GMime.Utils.HeaderDecodePhrase (this.message.Subject);
+			string subject = this.message.Subject;
 			AddProperty (Property.New ("dc:title", subject));
 
-			AddProperty (Property.NewDate ("fixme:date", message.Date.ToUniversalTime ()));
+			AddProperty (Property.NewDate ("fixme:date", message.Date.DateTime));
 
-			GMime.InternetAddressList addrs;
-			addrs = this.message.GetRecipients (GMime.RecipientType.To);
-			foreach (GMime.InternetAddress ia in addrs) {
+			InternetAddressList addrs;
+			addrs = this.message.To;
+			foreach (InternetAddress ia in addrs) {
 				AddProperty (Property.NewUnsearched ("fixme:to", ia.ToString (false)));
-				if (ia is GMime.InternetAddressMailbox) {
-					GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
-					
-					AddProperty (Property.New ("fixme:to_address", mailbox.Address));
+				if (ia is MailboxAddress) {
+					MailboxAddress ma = ia as MailboxAddress;
+					AddProperty (Property.New ("fixme:to_address", ma.Address));
 				}
-				
 				AddProperty (Property.New ("fixme:to_name", ia.Name));
 				AddEmailLink (ia);
 			}
-			addrs.Dispose ();
 
-			addrs = this.message.GetRecipients (GMime.RecipientType.Cc);
-			foreach (GMime.InternetAddress ia in addrs) {
+			addrs = this.message.Cc;
+			foreach (InternetAddress ia in addrs) {
 				AddProperty (Property.NewUnsearched ("fixme:cc", ia.ToString (false)));
-				if (ia is GMime.InternetAddressMailbox) {
-					GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
-					
+				if (ia is MailboxAddress) {
+					var mailbox = ia as MailboxAddress;
 					AddProperty (Property.New ("fixme:cc_address", mailbox.Address));
 				}
-				
+
 				AddProperty (Property.New ("fixme:cc_name", ia.Name));
 				AddEmailLink (ia);
 			}
-			addrs.Dispose ();
 
-			addrs = GMime.InternetAddressList.Parse (this.message.Sender);
-			foreach (GMime.InternetAddress ia in addrs) {
+			addrs = this.message.From;
+			foreach (InternetAddress ia in addrs) {
 				AddProperty (Property.NewUnsearched ("fixme:from", ia.ToString (false)));
-				if (ia is GMime.InternetAddressMailbox) {
-					GMime.InternetAddressMailbox mailbox = ia as GMime.InternetAddressMailbox;
-					
+				if (ia is MailboxAddress) {
+					var mailbox = ia as MailboxAddress;
 					AddProperty (Property.New ("fixme:from_address", mailbox.Address));
 				}
-				
+
 				AddProperty (Property.New ("fixme:from_name", ia.Name));
 				AddEmailLink (ia);
 			}
-			addrs.Dispose ();
 
-			if (HasAttachments (this.message.MimePart))
+			if (HasAttachments ())
 				AddProperty (Property.NewFlag ("fixme:hasAttachments"));
 
 			// Store the message ID and references are unsearched
 			// properties.  They will be used to generate
 			// conversations in the frontend.
-			string msgid = this.message.HeaderList ["Message-Id"];
+			string msgid = this.message.Headers ["Message-Id"];
 		        if (msgid != null)
-				AddProperty (Property.NewUnsearched ("fixme:msgid", GMime.Utils.DecodeMessageId (msgid)));
+				AddProperty (Property.NewUnsearched ("fixme:msgid", msgid));
 
-			foreach (GMime.References refs in this.message.References)
-				AddProperty (Property.NewUnsearched ("fixme:reference", refs.MessageId));
+			foreach (var refs in this.message.References)
+				AddProperty (Property.NewUnsearched ("fixme:reference", refs));
 
-			string list_id = this.message.HeaderList ["List-Id"];
+			string list_id = this.message.Headers ["List-Id"];
 			if (list_id != null)
-				AddProperty (Property.New ("fixme:mlist", GMime.Utils.HeaderDecodePhrase (list_id)));
-
-			// KMail can store replies in the same folder
-			// Use issent flag to distinguish between incoming
-			// and outgoing message
-			string kmail_msg_sent = this.message.HeaderList ["X-KMail-Link-Type"];
-			bool issent_is_set = false;
-			foreach (Property property in Indexable.Properties) {
-				if (property.Key == "fixme:isSent") {
-					issent_is_set = true;
-					break;
-				}
-			}
-			if (!issent_is_set && kmail_msg_sent != null && kmail_msg_sent == "reply")
-				AddProperty (Property.NewFlag ("fixme:isSent"));
+				AddProperty (Property.New ("fixme:mlist", list_id));
 		}
 
-		private void AddEmailLink (GMime.InternetAddress ia)
+		private void AddEmailLink (InternetAddress ia)
 		{
 #if ENABLE_RDF_ADAPTER
 			if (String.IsNullOrEmpty (ia.Name))
@@ -236,8 +183,15 @@ namespace Beagle.Filters {
 							{
 								AddLink (s);
 							});
-			using (GMime.Entity mime_part = this.message.MimePart)
-				this.handler.OnEachPart (mime_part);
+
+			int n_parts = 0;
+			foreach (MimePart mime_part in this.message.BodyParts) {
+				n_parts++;
+			}
+
+			foreach (MimePart mime_part in this.message.BodyParts) {
+				this.handler.OnEachPart (mime_part, n_parts);
+			}
 
 			AddIndexables (this.handler.ChildIndexables);
 		}
@@ -298,7 +252,6 @@ namespace Beagle.Filters {
 			this.handler = null;
 
 			if (this.message != null) {
-				this.message.Dispose ();
 				this.message = null;
 			}
 		}
@@ -306,7 +259,6 @@ namespace Beagle.Filters {
 		private class PartHandler {
 			private Indexable indexable;
 			private int count = 0; // parts handled so far
-			private int depth = 0; // part recursion depth
 			private ArrayList child_indexables = new ArrayList ();
 			private TextReader reader;
 			private FilterHtml.AddLinkCallback link_handler;
@@ -343,73 +295,19 @@ namespace Beagle.Filters {
 				return false;
 			}
 
-			public void OnEachPart (GMime.Entity mime_part)
+			public void OnEachPart (MimePart part, int n_parts)
 			{
-				GMime.Entity part = null;
-				bool part_needs_dispose = false;
-
-				//for (int i = 0; i < this.depth; i++)
-				//  Console.Write ("  ");
-				//Console.WriteLine ("Content-Type: {0}", mime_part.ContentType);
-			
-				++depth;
-
-				if (mime_part is GMime.MessagePart) {
-					GMime.MessagePart msg_part = (GMime.MessagePart) mime_part;
-
-					using (GMime.Message message = msg_part.Message) {
-						using (GMime.Entity subpart = message.MimePart)
-							this.OnEachPart (subpart);
-					}
-				} else if (mime_part is GMime.Multipart) {
-					GMime.Multipart multipart = (GMime.Multipart) mime_part;
-					int num_parts = multipart.Count;
-
-					// If the mimetype is multipart/alternative, we only want to index
-					// one part -- the richest one we can filter.
-					if (mime_part.ContentType.MediaSubtype.ToLower () == "alternative") {
-						// The richest formats are at the end, so work from there
-						// backward.
-						for (int i = num_parts - 1; i >= 0; i--) {
-							GMime.Entity subpart = multipart[i];
-
-							if (IsMimeTypeHandled (subpart.ContentType.ToString ())) {
-								part = subpart;
-								part_needs_dispose = true;
-								break;
-							} else {
-								subpart.Dispose ();
-							}
-						}
-					}
-
-					// If it's not alternative, or we don't know how to filter any of
-					// the parts, treat them like a bunch of attachments.
-					if (part == null) {
-						for (int i = 0; i < num_parts; i++) {
-							using (GMime.Entity subpart = multipart[i])
-								this.OnEachPart (subpart);
-						}
-					}
-				} else if (mime_part is GMime.Part)
-					part = mime_part;
-				else
-					throw new Exception (String.Format ("Unknown part type: {0}", part.GetType ()));
-
 				if (part != null) {
+					string mime_type = part.ContentType.ToString().ToLower();
 					System.IO.Stream stream = null;
-					
-					using (GMime.DataWrapper content_obj = ((GMime.Part) part).ContentObject)
-						stream = content_obj.Stream;
+					stream = part.ContentObject.Open();
 
 					// If this is the only part and it's plain text, we
 					// want to just attach it to our filter instead of
 					// creating a child indexable for it.
 					bool no_child_needed = false;
 
-					string mime_type = part.ContentType.ToString ().ToLower ();
-
-					if (this.depth == 1 && this.count == 0) {
+					if (n_parts == 1) {
 						if (mime_type == "text/plain") {
 							no_child_needed = true;
 
@@ -417,36 +315,26 @@ namespace Beagle.Filters {
 						} else if (mime_type == "text/html") {
 							no_child_needed = true;
 							html_part = true;
-							string enc = part.ContentType.GetParameter ("charset"); 
+							string enc = part.ContentType.Parameters ["charset"];
 							// DataWrapper.Stream is a very limited stream
 							// and does not allow Seek or Tell
 							// HtmlFilter requires Stream.Position=0.
 							// Play safe and create a memorystream
 							// for HTML parsing.
 
-							GMime.StreamMem mem_stream;
-							mem_stream = new GMime.StreamMem ();
+							MemoryStream mem_stream = new MemoryStream();
 
-							GMime.Stream data_stream;
-							data_stream = ((StreamWrapper) stream).GMimeStream;
-							data_stream.WriteToStream (mem_stream);
-							data_stream.Flush ();
+							part.ContentObject.WriteTo(mem_stream);
+							stream.Close();
 
-							// The StreamWrapper and hence the memory_stream
-							// will be closed when the reader is closed
-							// after Pull()-ing is done.
-							System.IO.Stream html_stream; 
-							html_stream = new StreamWrapper (mem_stream);
-							html_stream.Seek (0, SeekOrigin.Begin);
-
-							stream.Close ();
+							mem_stream.Seek (0, SeekOrigin.Begin);
 
 							try {
-								this.reader = FilterHtml.GetHtmlReader (html_stream, enc, link_handler);
+								this.reader = FilterHtml.GetHtmlReader (mem_stream, enc, link_handler);
 							} catch (Exception e) {
 								Log.Debug (e, "Exception while filtering HTML email {0}", this.indexable.Uri);
 								this.reader = null;
-								html_stream.Close ();
+								mem_stream.Close ();
 								html_part = false;
 							}
 						}
@@ -471,13 +359,12 @@ namespace Beagle.Filters {
 							child.MimeType = mime_type;
 
 							// If this is the richest part we found for multipart emails, add its content to textcache
-							if (snippet_attachment ||
-							    (this.depth == 1 && this.count == 0))
+							if (snippet_attachment || n_parts == 1)
 								child.CacheContent = true;
 							else
 								child.CacheContent = false;
 
-							string filename = ((GMime.Part) part).Filename;
+							string filename = part.FileName;
 
 							if (! String.IsNullOrEmpty (filename)) {
 								child.AddProperty (Property.NewKeyword ("fixme:attachment_title", filename));
@@ -487,9 +374,6 @@ namespace Beagle.Filters {
 							}
 
 							// Store length of attachment
-							long length = stream.Length;
-							if (length != -1)
-								child.AddProperty (Property.NewUnsearched ("fixme:filesize", length));
 
 							if (part.ContentType.MediaType.ToLower () == "text")
 								child.SetTextReader (new StreamReader (stream));
@@ -509,10 +393,6 @@ namespace Beagle.Filters {
 					this.count++;
 				}
 
-				if (part_needs_dispose)
-					part.Dispose ();
-
-				--depth;
 			}
 
 			public ICollection ChildIndexables {
