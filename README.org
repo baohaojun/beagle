@@ -1,0 +1,50 @@
+Beagle is resurrected. I forked this from [[https://github.com/GNOME/beagle][GNOME/beagle]] and fixed
+compilation errors and some runtime errors.
+
+I do this so that I can search my maildir emails. The Emacs GNUS
+search is too slow.
+
+I am using beagle on Debian testing, where gmime-sharp 2.6 is
+installed which is fairly broken. I can't index any of my email using
+it. So I have switched to use MimeKit.
+
+To build this version of beagle, you need:
+
+1. Get MimeKit installed into your =~/.mono/MimeKit.1.0.3.0/=. You can
+   use nuget for this:
+
+   #+BEGIN_SRC sh
+   sudo apt-get install nuget
+   mozroots --import --sync
+   cd ~/.mono && nuget install MimeKit
+   #+END_SRC
+
+2. Do the build the old way:
+
+   #+BEGIN_SRC sh
+   cd beagle/beagle
+   ./autogen.sh
+   ./configure
+   make -j8
+   sudo make install
+   #+END_SRC
+
+To use beagle to scan my mail folders under ~/Maildir, I did these things:
+
+1. Create a .MAIL-FOLDER.index for each MAIL-FOLDER that I want to index:
+
+   #+BEGIN_SRC
+   cd ~/Maildir
+   for x in */; do touch .${x%/}.index; done
+   #+END_SRC
+
+2. Start beagled, you must export MONO_PATH to include MimeKit:
+
+   #+BEGIN_SRC sh
+   export MONO_PATH=~/.mono/MimeKit.1.0.3.0/lib/net40/
+   beagled --debug --fg --indexing-delay 2
+   #+END_SRC
+
+3. Do the search with beagle-search:
+
+   [[http://baohaojun.github.io/images/beagle-search.png]]
