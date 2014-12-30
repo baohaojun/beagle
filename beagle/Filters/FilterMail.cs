@@ -298,7 +298,7 @@ namespace Beagle.Filters {
 			public void OnEachPart (MimePart part, int n_parts)
 			{
 				if (part != null) {
-					string mime_type = part.ContentType.ToString().ToLower();
+					string mime_type = part.ContentType.MimeType.ToString().ToLower();
 					System.IO.Stream stream = null;
 					stream = part.ContentObject.Open();
 
