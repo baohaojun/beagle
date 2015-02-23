@@ -92,7 +92,8 @@ libbeagleglue_la_SOURCES = 		\
 
 libbeagleglue_la_LIBADD =	\
 	$(SYSINFO_GLUE_LIBADD)	\
-	$(EXTRA_GLUE_LIBADD)
+	$(EXTRA_GLUE_LIBADD) 	\
+	-lglib-2.0
 
 libbeagleuiglue_la_SOURCES =	\
 	$(KEY_GLUE_SOURCES)	\
