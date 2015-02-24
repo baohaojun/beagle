@@ -35,6 +35,10 @@
     <Mapping QueryKeyword="title" BeagleProperty="dc:title" Tokenize="true">Title</Mapping>
     <Mapping QueryKeyword="mailfromaddr" BeagleProperty="parent:fixme:from_address" Tokenize="true" />
     <Mapping QueryKeyword="mailfromaddr" BeagleProperty="fixme:from_address" Tokenize="true">Email address of sender</Mapping>
+    <Mapping QueryKeyword="from" BeagleProperty="parent:fixme:from_address" Tokenize="true" />
+    <Mapping QueryKeyword="from" BeagleProperty="fixme:from_address" Tokenize="true">Email address of sender</Mapping>
+    <Mapping QueryKeyword="from" BeagleProperty="parent:fixme:from_name" Tokenize="true" />
+    <Mapping QueryKeyword="from" BeagleProperty="fixme:from_name" Tokenize="true">Name of email sender</Mapping>
     <Mapping QueryKeyword="pkggroup" BeagleProperty="pkg:group" Tokenize="true">Group to which the package belongs e.g. System/Configuration/Packaging</Mapping>
     <Mapping QueryKeyword="inarchive" BeagleProperty="fixme:inside_archive" Tokenize="false">Use 'inarchive:true' for files inside an archive.</Mapping>
     <Mapping QueryKeyword="album" BeagleProperty="fixme:album" Tokenize="true">Album name of the music</Mapping>
