@@ -3,6 +3,8 @@
 # This line will be automatically uncommented when you "make install"
 #installed=1
 
+export MONO_PATH=~/.mono/MimeKit.1.0.3.0/lib/net40${MONO_PATH+:$MONO_PATH}
+
 if [ -z $installed ] ; then
     echo "*** Running uninstalled @target@ ***"
 
