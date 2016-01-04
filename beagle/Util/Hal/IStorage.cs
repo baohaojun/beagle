@@ -8,7 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-using NDesk.DBus;
+using DBus;
 
 namespace Hal {
 

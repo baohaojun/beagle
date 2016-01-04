@@ -103,7 +103,7 @@ ASSEMBLIES =				\
 	$(NDESK_DBUS_LIBS)		\
 	$(NDESK_DBUS_GLIB_LIBS)		\
 	-r:Mono.Posix			\
-        -r:/usr/lib/mono/4.0/Mono.Cairo.dll
+        -r:/usr/lib/mono/4.5/Mono.Cairo.dll
 
 pkgdata_DATA = $(ASSEMBLY) $(ASSEMBLY).mdb $(ASSEMBLY).config
 

@@ -93,7 +93,8 @@ fi
 needed_dlls="Mono.Data.Sqlite Mono.Posix System.Data System.Web ICSharpCode.SharpZipLib"
 for i in $needed_dlls; do
   AC_MSG_CHECKING([for $i.dll])
-  if test ! -e `$PKG_CONFIG --variable=prefix $mono_pc`/lib/mono/2.0/$i.dll; then
+  if test ! -e `$PKG_CONFIG --variable=prefix $mono_pc`/lib/mono/2.0/$i.dll &&
+     test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/4.5/$i.dll; then
     AC_MSG_ERROR([missing required mono DLL: $i.dll])
   else
     AC_MSG_RESULT([found])
@@ -106,9 +107,9 @@ SHARPZIPLIB_LIBS="-r:ICSharpCode.SharpZipLib"
 AC_SUBST(SHARPZIPLIB_LIBS)
 
 # D-Bus libraries
-PKG_CHECK_MODULES(NDESK_DBUS, ndesk-dbus-1.0 >= $NDESK_DBUS_REQUIRED)
+PKG_CHECK_MODULES(NDESK_DBUS, dbus-sharp-2.0 >= $NDESK_DBUS_REQUIRED)
 
-PKG_CHECK_MODULES(NDESK_DBUS_GLIB, ndesk-dbus-glib-1.0 >= $NDESK_DBUS_GLIB_REQUIRED)
+PKG_CHECK_MODULES(NDESK_DBUS_GLIB, dbus-sharp-glib-2.0 >= $NDESK_DBUS_GLIB_REQUIRED)
 AC_SUBST(NDESK_DBUS_GLIB_LIBS)
 
 # check for OS
@@ -204,7 +205,8 @@ AM_CONDITIONAL(ENABLE_GOOGLEBACKENDS, test "x$enable_google" = "xyes")
 if test "x$enable_google" = "xyes"; then
   i="System.Security"
   AC_MSG_CHECKING([for $i.dll (needed by Google backends)])
-  if test ! -e `$PKG_CONFIG --variable=prefix $mono_pc`/lib/mono/2.0/$i.dll; then
+  if test ! -e `$PKG_CONFIG --variable=prefix $mono_pc`/lib/mono/2.0/$i.dll &&
+     test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/4.5/$i.dll; then
     AC_MSG_ERROR([missing required mono DLL: $i.dll])
   else
     AC_MSG_RESULT([found])
@@ -569,7 +571,8 @@ dnl I hope checking the presence of the qt-dotnet.dll should be enough
 if test "x$enable_qt" != "xno" -a "x$has_qyoto" = "xno"; then
 	i="qt-dotnet"
 	AC_MSG_CHECKING([for $i.dll])
-	if test ! -e `$PKG_CONFIG --variable=prefix $mono_pc`/lib/mono/2.0/$i.dll; then
+	if test ! -e `$PKG_CONFIG --variable=prefix $mono_pc`/lib/mono/2.0/$i.dll &&
+           test ! -e `$PKG_CONFIG --variable=prefix mono`/lib/mono/4.5/$i.dll; then
 		AC_MSG_ERROR([missing required mono DLL: $i.dll])
 	else
 		AC_MSG_RESULT([found])

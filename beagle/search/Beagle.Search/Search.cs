@@ -8,7 +8,7 @@ using System;
 using System.Collections;
 using System.Diagnostics;
 
-using NDesk.DBus;
+using DBus;
 using Mono.Unix;
 
 using Beagle.Util;
