@@ -116,7 +116,6 @@ namespace Beagle {
 		/// <value>
 		/// List of fragments
 		/// </value>
-		[XmlElement (ElementName="Fragment", Type=typeof(Fragment))]
 		[XmlArrayItem (ElementName="Fragment", Type=typeof (Fragment))]
 		public ArrayList Fragments;
 

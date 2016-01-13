@@ -70,7 +70,7 @@ namespace Beagle.Util {
 
 		static public Uri PathToFileUri (string path)
 		{
-			return new Uri (PathToFileUriString (path), true);
+			return new Uri (PathToFileUriString (path));
 		}
 
 		// DEPRECATED! path is always escaped but escaping of fragment is

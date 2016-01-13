@@ -456,7 +456,7 @@ namespace Beagle.Util {
 			return false;
 		}
 
-		static char[] CharsToQuote = { ';', '?', ':', '@', '&', '=', '$', ',', '#', '%', '"', ' ' };
+		static char[] CharsToQuote = { ';', '?', '#', ' ' };
 
 		static public string HexEscape (string str)
 		{
