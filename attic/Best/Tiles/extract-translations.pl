@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl -w
 
 opendir(DIR, ".");
 @files = grep(/\.html$/,readdir(DIR));
